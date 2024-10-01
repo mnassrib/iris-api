@@ -30,6 +30,13 @@ jobs:
         run: |
           docker run iris-api pytest tests/
 
-      - name: Deploy to Render
+      - name: Install Render CLI
         run: |
+          curl -fsSL https://render.com/download-cli | bash
+
+      - name: Deploy to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  # Assurez-vous d'ajouter votre clé API Render dans les secrets GitHub
+        run: |
+          render login --api-key $RENDER_API_KEY
           render deploy iris-api
