@@ -30,6 +30,12 @@ jobs:
         run: |
           docker run iris-api pytest tests/
 
+      # Installer le Render CLI
+      - name: Install Render CLI
+        run: |
+          curl -fsSL https://render.com/static/cli/install.sh | bash
+
+      # Déployer avec Render CLI
       - name: Deploy to Render
         run: |
           render deploy iris-api
