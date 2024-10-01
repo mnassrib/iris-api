@@ -63,7 +63,14 @@ jobs:
           docker tag iris-api:latest ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
 
-      # Étape 9: Déployer l'application sur Render ou une autre plateforme
+      # Étape 9: Installer la CLI Render pour déployer l'application
+      - name: Install Render CLI
+        if: success()
+        run: |
+          curl -L https://github.com/render-oss/render-cli/releases/download/v0.1.11/render-linux-x86_64 -o /usr/local/bin/render
+          chmod +x /usr/local/bin/render
+
+      # Étape 10: Déployer l'application sur Render
       - name: Deploy to Render
         if: success()
         run: |
