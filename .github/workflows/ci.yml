@@ -70,11 +70,12 @@ jobs:
           curl -L https://github.com/render-oss/render-cli/releases/download/v0.1.11/render-linux-x86_64 -o /usr/local/bin/render
           chmod +x /usr/local/bin/render
 
-      # Étape 10: Configurer Render CLI avec le token API
-      - name: Configure Render CLI
+      # Étape 10: Créer un fichier de configuration pour Render CLI
+      - name: Create Render CLI config
         if: success()
         run: |
-          render config init --api-key ${{ secrets.RENDER_API_KEY }}
+          mkdir -p ~/.config/render
+          echo "{\"api_key\": \"${{ secrets.RENDER_API_KEY }}\"}" > ~/.config/render/config.json
 
       # Étape 11: Déployer l'application sur Render
       - name: Deploy to Render
