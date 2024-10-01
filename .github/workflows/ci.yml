@@ -32,7 +32,7 @@ jobs:
 
       - name: Install Render CLI
         run: |
-          curl -fsSL https://github.com/render-oss/render-cli/releases/latest/download/render-linux-amd64 -o /usr/local/bin/render
+          curl -fsSL https://github.com/render-oss/render-cli/releases/download/v0.1.11/render-linux-x86_64 -o /usr/local/bin/render
           chmod +x /usr/local/bin/render
 
       - name: Deploy to Render
