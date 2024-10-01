@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
@@ -32,12 +32,14 @@ jobs:
 
       - name: Install Render CLI
         run: |
-          curl -L https://github.com/renderinc/render-cli/releases/download/v0.1.13/render-cli_linux_amd64 -o /usr/local/bin/render
+          curl -L https://github.com/renderinc/render-cli/releases/download/v0.1.13/render-cli_linux_amd64.tar.gz -o render-cli.tar.gz
+          tar -xzf render-cli.tar.gz
+          sudo mv render /usr/local/bin/render
           chmod +x /usr/local/bin/render
 
       - name: Deploy to Render
         env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  # Assurez-vous d'ajouter votre clé API Render dans les secrets GitHub
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           render login --api-key $RENDER_API_KEY
           render deploy iris-api
