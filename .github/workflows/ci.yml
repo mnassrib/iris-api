@@ -32,9 +32,7 @@ jobs:
 
       - name: Install Render CLI
         run: |
-          curl -L https://github.com/renderinc/render-cli/releases/download/v0.1.13/render-cli_linux_amd64.tar.gz -o render-cli.tar.gz
-          tar -xzf render-cli.tar.gz
-          sudo mv render /usr/local/bin/render
+          curl -L https://github.com/renderinc/render-cli/releases/download/v0.1.13/render-cli_linux_amd64 -o /usr/local/bin/render
           chmod +x /usr/local/bin/render
 
       - name: Deploy to Render
