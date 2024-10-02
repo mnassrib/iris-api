@@ -63,8 +63,4 @@ jobs:
           docker tag iris-api:latest ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
 
-      # Étape 9: Déclencher le déploiement avec le webhook
-      - name: Trigger Render Deploy Hook
-        if: success()
-        run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
