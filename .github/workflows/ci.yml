@@ -77,10 +77,8 @@ jobs:
           mkdir -p ~/.config/render
           echo "{\"api_key\": \"${{ secrets.RENDER_API_KEY }}\"}" > ~/.config/render/config.json
 
-      # Étape 11: Déployer l'application sur Render
+      # Étape 11: Déployer l'application sur Render en créant un déploiement
       - name: Deploy to Render
         if: success()
         run: |
-          render deploy iris-api
-
-          
+          render deploys create iris-api --service-id ${{ secrets.SERVICE_ID }}
