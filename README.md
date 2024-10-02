@@ -1,23 +1,68 @@
-### Guide pour Déployer une Application de Prédiction d’Iris avec un Pipeline CI/CD sur Render
+# Guide pour Déployer une API de Prédiction Iris avec un Pipeline CI/CD sur Render
 
-#### Introduction
-Ce guide vous présente un projet d'application Flask de prédiction de l'espèce d'Iris, utilisant un modèle de machine learning entraîné avec scikit-learn. L'application est automatiquement déployée sur Render grâce à un pipeline CI/CD configuré avec GitHub Actions.
+Ce projet implémente une API Flask permettant de prédire la classe d'une fleur Iris à partir de ses caractéristiques, accompagnée d'une documentation Swagger. Le projet inclut également un pipeline CI/CD complet utilisant GitHub Actions pour automatiser les tests et le déploiement de l'application sur Render, avec une image Docker hébergée sur Docker Hub.
 
-#### Définition du CI/CD
+## Table des matières
 
-Le CI/CD (Intégration Continue/Déploiement Continu) est un ensemble de pratiques visant à automatiser les processus de développement logiciel, depuis l'intégration des modifications de code jusqu'à leur déploiement en production. Il permet de minimiser les erreurs humaines, d'accélérer les livraisons, et d'améliorer la qualité du code en s'appuyant sur des tests automatisés. 
+1. [Introduction et description du projet](#introduction-et-description-du-projet)
+2. [Fonctionnalités](#fonctionnalités)
+3. [Prérequis](#prérequis)
+4. [Installation](#installation)
+5. [Structure du projet](#structure-du-projet)
+6. [Utilisation](#utilisation)
+7. [Tests](#tests)
+8. [Déploiement avec Docker](#déploiement-avec-docker)
+9. [Pipeline CI/CD avec GitHub Actions](#pipeline-cicd-avec-github-actions)
+10. [Importance du CI/CD](#importance-du-cicd)
+11. [Tester l'API en production](#tester-lapi-en-production)
+12. [Améliorations futures](#améliorations-futures)
 
-- **Intégration Continue (CI)** : Chaque modification de code est automatiquement testée et intégrée dans la branche principale du projet après avoir passé des tests.
-- **Déploiement Continu (CD)** : Une fois les tests validés, le code est automatiquement déployé dans un environnement de production.
+## Introduction et description du projet
 
-### Prérequis
+Ce projet a pour but de démontrer une approche complète de développement d'une API de prédiction utilisant le modèle `RandomForestClassifier` de scikit-learn, avec une intégration complète de CI/CD (Continuous Integration/Continuous Deployment). 
 
-1. **Python 3.12**
-2. **GitHub et un dépôt Git**
-3. **Compte Render** (Pour héberger l'application)
-4. **Docker Hub** (Pour héberger l'image Docker de votre application)
+Grâce à cette API, vous pourrez prédire la classe d'une fleur Iris à partir de ses caractéristiques florales (longueur et largeur des sépales et des pétales). L'API est documentée via Swagger UI pour faciliter l'interaction avec les différents endpoints.
 
-### Structure du Projet
+Un pipeline CI/CD est mis en place avec GitHub Actions pour automatiser les tests, la construction d'une image Docker, et le déploiement de l'application sur la plateforme Render. Ce pipeline permet une gestion fluide des déploiements en production tout en garantissant la qualité grâce à des tests automatisés.
+
+## Fonctionnalités
+
+- **Prédiction** : Fournit la classe prédite (Setosa, Versicolor, Virginica) d'une fleur Iris à partir de 4 caractéristiques.
+- **Documentation Swagger** : Swagger UI est intégré pour documenter les endpoints disponibles.
+- **CI/CD Automatisé** : Tests unitaires, construction d'une image Docker, et déploiement automatisé sur Render via GitHub Actions.
+- **Validation des données** : Validation des données d'entrée avant la prédiction pour s'assurer que les entrées sont correctes.
+- **Modularité** : Organisation modulaire du code pour une meilleure maintenabilité.
+
+## Prérequis
+
+Avant de commencer, assurez-vous d'avoir les éléments suivants :
+
+- **Python 3.12**
+- **GitHub et un dépôt Git**
+- **Compte Render** (pour héberger l'application)
+- **Compte Docker Hub** (pour héberger l'image Docker de l'application)
+
+## Installation
+
+1. **Cloner le dépôt Git** :
+   ```bash
+   git clone https://github.com/mnassrib/iris-api.git
+   cd iris-api
+   ```
+
+2. **Installer les dépendances** :
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Entraîner le modèle (si le modèle n'est pas encore disponible dans le dossier `models`)** :
+   ```bash
+   python train_model.py
+   ```
+
+## Structure du projet
+
+La structure du projet est la suivante :
 
 ```
 iris-api
@@ -25,8 +70,13 @@ iris-api
 ├── train_model.py
 ├── models
 │   └── iris_model.pkl
+├── utils
+│   ├── model_utils.py
+│   └── validation.py
+├── swagger
+│   ├── index.yml
+│   └── predict.yml
 ├── tests
-│   └── __init__.py
 │   └── test_app.py
 ├── Dockerfile
 ├── requirements.txt
@@ -36,190 +86,165 @@ iris-api
         └── ci-cd.yml
 ```
 
-### Étape 1: Entraîner le Modèle
+### Explication des fichiers principaux :
 
-Le fichier `train_model.py` charge le dataset Iris, entraîne un modèle `RandomForestClassifier`, puis sauvegarde ce modèle dans un fichier pickle sous `models/iris_model.pkl`.
+- **`app.py`** : Fichier principal de l'API. Il contient les routes pour les prédictions et la page d'accueil.
+- **`train_model.py`** : Script pour entraîner le modèle `RandomForestClassifier` et le sauvegarder.
+- **`models/iris_model.pkl`** : Modèle pré-entraîné utilisé pour faire des prédictions.
+- **`utils/model_utils.py`** : Contient la fonction de chargement du modèle.
+- **`utils/validation.py`** : Contient la fonction de validation des données d'entrée.
+- **`swagger/`** : Contient les fichiers YAML définissant la documentation Swagger pour les différents endpoints.
+- **`tests/test_app.py`** : Tests unitaires pour valider le bon fonctionnement de l'API.
+- **`.github/workflows/ci-cd.yml`** : Pipeline CI/CD pour exécuter les tests et déployer l'application sur Render.
 
-```python
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-import joblib
+## Utilisation
 
-# Charger le dataset Iris
-iris = datasets.load_iris()
-X = iris.data
-y = iris.target
+1. **Lancer l'application localement** :
+   ```bash
+   python app.py
+   ```
 
-# Séparer les données
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+   L'application sera disponible à l'adresse `http://127.0.0.1:5000`.
 
-# Entraîner le modèle
-model = RandomForestClassifier()
-model.fit(X_train, y_train)
+2. **Tester l'API avec une requête curl** :
+   ```bash
+   curl -X POST http://localhost:5000/predict \
+   -H "Content-Type: application/json" \
+   -d "{\"features\": [5.1, 3.5, 1.4, 0.2]}"
 
-# Sauvegarder le modèle
-joblib.dump(model, 'models/iris_model.pkl')
-```
+   ```
 
-### Étape 2: Créer l'API avec Flask
+   Vous recevrez une réponse JSON avec la classe prédite :
+   ```json
+   {
+     "prediction": 0
+   }
+   ```
 
-L'application Flask dans `app.py` expose un endpoint `/predict` qui reçoit un JSON avec les caractéristiques d'une fleur et retourne la prédiction de l'espèce d'Iris.
+3. **Accéder à la documentation Swagger** :
+   Accédez à `http://127.0.0.1:5000/apidocs/` pour voir la documentation complète de l'API générée automatiquement via Swagger.
 
-```python
-from flask import Flask, request, jsonify
-import joblib
-import os
+4. **Tests** :
+    Pour exécuter les tests unitaires :
 
-# Initialiser Flask
-app = Flask(__name__)
+    ```bash
+    pytest
+    ```
 
-# Charger le modèle
-model_path = os.path.join('models', 'iris_model.pkl')
-model = joblib.load(model_path)
+    Les tests se trouvent dans le répertoire `tests/` et couvrent les fonctionnalités principales de l'API.
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.json
-    prediction = model.predict([data['features']])
-    return jsonify({'prediction': int(prediction[0])})
+## Tester l'image Docker localement
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-```
+1. **Construire l'image Docker** :
+   ```bash
+   docker build -t iris-api .
+   ```
 
-### Étape 3: Tester l'Application
+2. **Lancer le conteneur Docker** :
+   ```bash
+   docker run -p 5000:5000 iris-api
+   ```
 
-Les tests se trouvent dans `tests/test_app.py`. Nous utilisons `pytest` pour exécuter des tests unitaires sur l'application. Le test simule une requête POST à l'endpoint `/predict` et vérifie que la réponse contient une prédiction.
+   L'application sera disponible à `http://127.0.0.1:5000`.
 
-```python
-import pytest
-import json
-from app import app
+3. **Tester l'API avec une requête curl** :
+   ```bash
+   curl -X POST http://localhost:5000/predict \
+   -H "Content-Type: application/json" \
+   -d "{\"features\": [5.1, 3.5, 1.4, 0.2]}"
+   ```
 
-@pytest.fixture
-def client():
-    with app.test_client() as client:
-        yield client
+4. **Accéder à la documentation Swagger** :
+   Accédez à `http://127.0.0.1:5000/apidocs/` pour voir la documentation complète de l'API générée automatiquement via Swagger.
 
-def test_predict(client):
-    response = client.post('/predict', json={
-        'features': [5.1, 3.5, 1.4, 0.2]
-    })
-    assert response.status_code == 200
-    data = json.loads(response.data)
-    assert 'prediction' in data
-```
+5. **Tests** :
+    Pour exécuter les tests unitaires :
 
-### Étape 4: Dockeriser l'Application
+    ```bash
+    pytest
+    ```
 
-Le fichier `Dockerfile` est utilisé pour containeriser l'application Flask. Cela permet de créer une image Docker qui sera déployée sur Render.
+## Déploiement via un Pipeline CI/CD avec GitHub Actions
 
-```dockerfile
-FROM python:3.12-slim
+Ce projet est configuré avec un pipeline CI/CD dans le fichier `.github/workflows/ci-cd.yml`. Le pipeline effectue les actions suivantes :
 
-WORKDIR /app
+1. **Installation des dépendances** : Installe les dépendances définies dans `requirements.txt`.
+2. **Exécution des tests** : Exécute les tests unitaires via `pytest`.
+3. **Création et déploiement de l'image Docker** : Si les tests sont réussis, le pipeline crée une image Docker et la pousse sur Docker Hub.
+4. **Déclenchement du déploiement sur Render** : Une fois l'image Docker prête, le déploiement est déclenché sur Render via un webhook. **Notez qu'il est important de désactiver l'option Auto-Deploy sur Render pour que le déploiement suive uniquement le workflow GitHub Actions et ne se déclenche qu'après validation complète du pipeline CI/CD**.
 
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+### Secrets dans CI/CD
 
-COPY app.py app.py
-COPY models/ models/
-COPY tests/ tests/  
+Les secrets pour Docker Hub et Render doivent être ajoutés dans les secrets GitHub de votre dépôt. Pour ce faire :
 
-RUN pytest tests/
+1. **Ajouter les secrets GitHub** :
+   - `DOCKER_USERNAME` : Votre nom d'utilisateur Docker Hub.
+   - `DOCKER_PASSWORD` : Votre mot de passe Docker Hub.
+   - `RENDER_DEPLOY_HOOK` : URL du webhook Render pour déployer l'application.
 
-EXPOSE 5000
+2. Allez dans les paramètres de votre dépôt GitHub, puis dans la section **Secrets and variables** > **Actions** pour ajouter ces secrets.
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
-```
+## Importance du CI/CD
 
-### Étape 5: Configurer le Pipeline CI/CD
+### Qu'est-ce que le CI/CD ?
 
-Le pipeline CI/CD est défini dans `.github/workflows/ci-cd.yml`. Ce fichier configure les étapes pour exécuter les tests, construire l'image Docker, la pousser sur Docker Hub, et déclencher le déploiement automatique sur Render.
+Le CI/CD, ou **Continuous Integration/Continuous Deployment**, est une pratique de développement logiciel qui automatise les processus de test, d'intégration et de déploiement des applications. Cette approche permet d'intégrer les nouvelles modifications dans le code source de manière continue, de tester ces modifications automatiquement, et de déployer rapidement et de manière fiable les nouvelles versions de l'application.
 
-#### Secrets dans GitHub Actions
+### Pourquoi est-il important ?
 
-Pour sécuriser les informations sensibles comme les identifiants Docker et les hooks de déploiement, nous utilisons les **Secrets** de GitHub. Vous pouvez les ajouter dans la section *Settings* du dépôt GitHub, sous *Secrets and variables*.
+L'importance du CI/CD réside dans les bénéfices suivants :
+- **Automatisation** : Le CI/CD permet d'automatiser des processus fastidieux comme les tests et les déploiements. Cela réduit les erreurs humaines et garantit des processus fiables et reproductibles.
+- **Rapidité** : En automatisant les tests et les déploiements, les développeurs peuvent itérer plus rapidement et mettre à
 
-Secrets nécessaires :
+ jour leurs applications plus fréquemment, avec des retours immédiats en cas de problèmes.
+- **Qualité** : Grâce à des tests automatisés exécutés à chaque modification du code, le CI/CD améliore la qualité du code en détectant rapidement les régressions ou les bugs.
+- **Confiance** : En s'appuyant sur des pipelines bien configurés, les développeurs peuvent déployer en production avec confiance, sachant que les tests ont été effectués et que les étapes de déploiement sont automatisées.
 
-- **DOCKER_USERNAME** : Votre nom d'utilisateur Docker Hub.
-- **DOCKER_PASSWORD** : Votre mot de passe Docker Hub.
-- **RENDER_DEPLOY_HOOK** : Le hook de déploiement Render (Optionnel si vous n’utilisez pas l’Auto-Deploy).
+### Application dans ce projet
 
-```yaml
-jobs:
-  # Job de construction, de test et de déploiement
-  build_and_deploy:
-    runs-on: ubuntu-latest
+Dans ce projet, le pipeline CI/CD assure que chaque modification du code est correctement testée avant d'être déployée en production. Voici comment le pipeline est appliqué :
 
-    steps:
-      # Étape 1: Récupérer le code du dépôt GitHub
-      - name: Checkout code
-        uses: actions/checkout@v3
+1. **Test automatique** : À chaque push sur la branche principale du dépôt GitHub, le pipeline CI/CD teste le code avec `pytest`.
+2. **Création de l'image Docker** : Si les tests réussissent, une image Docker est créée.
+3. **Déploiement automatique** : Enfin, l'image est déployée sur Render, garantissant que la dernière version de l'application est toujours en production.
 
-      # Étape 2: Configurer Python 3.12
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.12'
+## Tester l'API en production
 
-      # Étape 3: Mettre en cache les dépendances Python pour accélérer les builds
-      - name: Cache pip dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+L'API de ce projet est déployée sur Render et est disponible à l'adresse suivante :
 
-      # Étape 4: Installer les dépendances définies dans le fichier requirements.txt
-      - name: Install Python dependencies
-        run: |
-          pip install -r requirements.txt
+**[https://iris-api-7cbf.onrender.com](https://iris-api-7cbf.onrender.com)**
 
-      # Étape 5: Exécuter les tests avec pytest
-      - name: Run tests
-        run: |
-          pytest --maxfail=5 --disable-warnings
+### Tester l'API en production
 
-      # Étape 6: Créer une image Docker seulement si les tests réussissent
-      - name: Build Docker image
-        if: success()
-        run: |
-          docker build -t iris-api .
-
-      # Étape 7: Se connecter à Docker Hub (ou un registre Docker privé)
-      - name: Log in to Docker Hub
-        if: success()
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      # Étape 8: Taguer et pousser l'image Docker sur Docker Hub
-      - name: Push Docker image to Docker Hub
-        if: success()
-        run: |
-          docker tag iris-api:latest ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
-
-      # Étape 9: Déclencher le déploiement avec le webhook
-      - name: Trigger Render Deploy Hook
-        if: success()
-        run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-```
-
-### Étape 6: Tester Localement l'API
-
-Vous pouvez tester localement l'API avant de la déployer en utilisant `curl` :
+Vous pouvez tester l'API en envoyant une requête POST à l'endpoint `/predict` :
 
 ```bash
-curl -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d "{\"features\": [5.1, 3.5, 1.4, 0.2]}"
+curl -X POST https://iris-api-7cbf.onrender.com/predict \
+-H "Content-Type: application/json" \
+-d "{\"features\": [5.1, 3.5, 1.4, 0.2]}"
 ```
 
-Cela devrait retourner une prédiction dans la réponse JSON.
+Vous recevrez une réponse JSON avec la classe prédite. Par exemple :
 
-### Conclusion
+```json
+{
+  "prediction": 0
+}
+```
 
-Ce projet vous permet d'automatiser le déploiement d'une application de machine learning sur Render tout en vous assurant de la qualité grâce à un pipeline CI/CD. En intégrant des tests automatisés, des images Docker, et un déploiement continu, vous garantissez un développement rapide et fiable, tout en maintenant une haute qualité de code.
+### Consulter la documentation de l'API
+
+Vous pouvez également accéder à la documentation Swagger de l'API en production à l'adresse suivante :
+
+**[https://iris-api-7cbf.onrender.com/apidocs/](https://iris-api-7cbf.onrender.com/apidocs/)**
+
+## Améliorations futures
+
+- Ajouter des tests supplémentaires pour améliorer la couverture.
+- Optimiser la gestion des erreurs pour plus de robustesse.
+- Implémenter un système de cache pour les prédictions.
+- Ajouter des fonctionnalités de monitoring et de logging pour la production.
+
+---
+
+Ce guide est conçu pour vous fournir un aperçu complet du projet, de l'installation à l'utilisation, en passant par les tests, le déploiement et l'importance du CI/CD dans ce projet.

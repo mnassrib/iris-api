@@ -1,0 +1,11 @@
+summary: "Page d'accueil de l'API Iris"
+description: "Bienvenue sur l'API de prédiction Iris"
+responses:
+  200:
+    description: "Bienvenue sur l'API de prédiction Iris"
+    schema:
+      type: "object"
+      properties:
+        message:
+          type: "string"
+          example: "Bienvenue sur l'API de prédiction Iris"

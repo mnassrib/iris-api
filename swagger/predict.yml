@@ -1,0 +1,32 @@
+summary: "Faire une prédiction avec le modèle Iris"
+description: "Prend les caractéristiques de la fleur Iris en entrée et retourne la classe prédite."
+parameters:
+  - name: "body"
+    in: "body"
+    required: True
+    description: "Les caractéristiques de la fleur sous forme de liste"
+    schema:
+      type: "object"
+      properties:
+        features:
+          type: "array"
+          items:
+            type: "number"
+          example: [5.1, 3.5, 1.4, 0.2]
+responses:
+  200:
+    description: "La classe prédite pour la fleur Iris"
+    schema:
+      type: "object"
+      properties:
+        prediction:
+          type: "integer"
+          example: 0
+  400:
+    description: "Erreur dans les données envoyées"
+    schema:
+      type: "object"
+      properties:
+        error:
+          type: "string"
+          example: "Les données doivent contenir la clé 'features'."
