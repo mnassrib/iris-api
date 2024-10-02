@@ -9,6 +9,10 @@ app = Flask(__name__)
 model_path = os.path.join('models', 'iris_model.pkl')
 model = joblib.load(model_path)
 
+@app.route('/')
+def welcome():
+    return "Welcome to the Iris API!"
+
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.json
