@@ -70,15 +70,8 @@ jobs:
           curl -L https://github.com/render-oss/render-cli/releases/download/v0.1.11/render-linux-x86_64 -o /usr/local/bin/render
           chmod +x /usr/local/bin/render
 
-      # Étape 10: Créer un fichier de configuration pour Render CLI
-      - name: Create Render CLI config
+      # Étape 10: Déclencher le déploiement avec le webhook
+      - name: Trigger Render Deploy Hook
         if: success()
         run: |
-          mkdir -p ~/.config/render
-          echo "{\"api_key\": \"${{ secrets.RENDER_API_KEY }}\"}" > ~/.config/render/config.json
-
-      # Étape 11: Déployer l'application sur Render en créant un déploiement
-      - name: Deploy to Render
-        if: success()
-        run: |
-          render deploys create iris-api --service-id ${{ secrets.SERVICE_ID }}
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
