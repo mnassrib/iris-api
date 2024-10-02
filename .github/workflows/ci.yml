@@ -63,14 +63,7 @@ jobs:
           docker tag iris-api:latest ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/iris-api:latest
 
-      # Étape 9: Installer la CLI Render pour déployer l'application
-      - name: Install Render CLI
-        if: success()
-        run: |
-          curl -L https://github.com/render-oss/render-cli/releases/download/v0.1.11/render-linux-x86_64 -o /usr/local/bin/render
-          chmod +x /usr/local/bin/render
-
-      # Étape 10: Déclencher le déploiement avec le webhook
+      # Étape 9: Déclencher le déploiement avec le webhook
       - name: Trigger Render Deploy Hook
         if: success()
         run: |
