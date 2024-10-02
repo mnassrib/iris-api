@@ -19,9 +19,7 @@ COPY tests/ tests/
 RUN pytest tests/
 
 # Exposer le port 5000 pour l'application Flask
-#EXPOSE 5000
+EXPOSE 5000
 
 # Lancer l'application avec Gunicorn pour la production
-#CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
-
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
