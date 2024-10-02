@@ -16,7 +16,7 @@ COPY models/ models/
 COPY tests/ tests/  
 
 # Exécuter les tests
-#RUN pytest tests/
+RUN pytest tests/
 
 # Exposer le port 5000 pour l'application Flask
 EXPOSE 5000
