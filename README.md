@@ -10,12 +10,11 @@ Ce projet implémente une API Flask permettant de prédire la classe d'une fleur
 4. [Installation](#installation)
 5. [Structure du projet](#structure-du-projet)
 6. [Utilisation](#utilisation)
-7. [Tests](#tests)
-8. [Déploiement avec Docker](#déploiement-avec-docker)
-9. [Pipeline CI/CD avec GitHub Actions](#pipeline-cicd-avec-github-actions)
-10. [Importance du CI/CD](#importance-du-cicd)
-11. [Tester l'API en production](#tester-lapi-en-production)
-12. [Améliorations futures](#améliorations-futures)
+7. [Tester l'image Docker localement](#tester-l-image-docker-localement)
+8. [Déploiement via un Pipeline CI/CD avec GitHub Actions](#déploiement-via-un-pipeline-ci-cd-avec-gitHub-actions)
+9. [Importance du CI/CD](#importance-du-cicd)
+10. [Tester l'API en production](#tester-lapi-en-production)
+11. [Améliorations futures](#améliorations-futures)
 
 ## Introduction et description du projet
 
