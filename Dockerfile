@@ -10,10 +10,10 @@ COPY requirements.txt requirements.txt
 # Installer les dépendances
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier les fichiers nécessaires à l'application
+# Copier les fichiers et dossiers nécessaires à l'application
 COPY app.py app.py
-COPY utils utils
-COPY swagger swagger
+COPY utils/ utils/
+COPY swagger/ swagger/
 COPY models/ models/
 COPY tests/ tests/  
 

@@ -80,6 +80,7 @@ iris-api
 │   └── test_app.py
 ├── Dockerfile
 ├── requirements.txt
+├── .gitignore
 ├── README.md
 └── .github
     └── workflows
@@ -95,6 +96,7 @@ iris-api
 - **`utils/validation.py`** : Contient la fonction de validation des données d'entrée.
 - **`swagger/`** : Contient les fichiers YAML définissant la documentation Swagger pour les différents endpoints.
 - **`tests/test_app.py`** : Tests unitaires pour valider le bon fonctionnement de l'API.
+- **`.gitignore`** : Fichier pour exclure certains fichiers ou répertoires du suivi de version Git, tels que les fichiers générés automatiquement ou les données sensibles.
 - **`.github/workflows/ci-cd.yml`** : Pipeline CI/CD pour exécuter les tests et déployer l'application sur Render.
 
 ## Utilisation
