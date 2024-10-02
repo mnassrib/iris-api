@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier les fichiers nécessaires à l'application
 COPY app.py app.py
+COPY utils utils
+COPY swagger swagger
 COPY models/ models/
 COPY tests/ tests/  
 
