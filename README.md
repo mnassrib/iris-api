@@ -95,6 +95,7 @@ iris-api
 - **`utils/validation.py`** : Contient la fonction de validation des données d'entrée.
 - **`swagger/`** : Contient les fichiers YAML définissant la documentation Swagger pour les différents endpoints.
 - **`tests/test_app.py`** : Tests unitaires pour valider le bon fonctionnement de l'API.
+- **`__init__.py`** : Fichier qui indique à Python que le répertoire doit être traité comme un module, souvent utilisé pour initialiser des packages et gérer les imports au sein du répertoire.
 - **`.gitignore`** : Fichier pour exclure certains fichiers ou répertoires du suivi de version Git, tels que les fichiers générés automatiquement ou les données sensibles.
 - **`.github/workflows/ci-cd.yml`** : Pipeline CI/CD pour exécuter les tests et déployer l'application sur Render.
 
