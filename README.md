@@ -76,6 +76,7 @@ iris-api
 │   ├── index.yml
 │   └── predict.yml
 ├── tests
+│   └── __init__.py
 │   └── test_app.py
 ├── Dockerfile
 ├── requirements.txt
