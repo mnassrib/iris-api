@@ -10,7 +10,7 @@ Ce projet implémente une API Flask permettant de prédire la classe d'une fleur
 4. [Installation](#installation)
 5. [Structure du projet](#structure-du-projet)
 6. [Exécution de l'API en local avec Python](#exécution-de-lapi-en-local-avec-python)
-7. [Simulation de l'environnement de production avec Docker](#simulation-de-lenvironnement-de-production-avec-Docker)
+7. [Simulation de l'environnement de production avec Docker](#simulation-de-lenvironnement-de-production-avec-docker)
 8. [Automatisation du déploiement avec un pipeline CI/CD](#automatisation-du-déploiement-avec-un-pipeline-cicd)
 9. [Tester l'API en production](#tester-lapi-en-production)
 10. [Améliorations futures](#améliorations-futures)
@@ -113,7 +113,6 @@ iris-api
    curl -X POST http://localhost:5000/predict \
    -H "Content-Type: application/json" \
    -d "{\"features\": [5.1, 3.5, 1.4, 0.2]}"
-
    ```
 
    Vous recevrez une réponse JSON avec la classe prédite :
@@ -134,6 +133,8 @@ iris-api
     ```
 
     Les tests se trouvent dans le répertoire `tests/` et couvrent les fonctionnalités principales de l'API.
+
+> **Note :** Sur Windows, utilisez `^` pour les requêtes multi-lignes, tandis que sur Linux/macOS, utilisez `\`. Si vous rencontrez des erreurs, ajustez le format des requêtes en fonction de votre système d'exploitation.
 
 ## Simulation de l'environnement de production avec Docker
    - **Description** : Cette étape simule un environnement de production localement en exécutant l'API dans un conteneur Docker. Cela permet de tester l'application dans un environnement isolé, avec toutes ses dépendances, comme ce sera le cas en production. Vous construisez l'image Docker de l'application, puis vous la lancez dans un conteneur sur `localhost:5000`, assurant ainsi que l'application est prête pour le déploiement.
@@ -184,24 +185,16 @@ L'importance du CI/CD réside dans les bénéfices suivants :
 - **Qualité** : Grâce à des tests automatisés exécutés à chaque modification du code, le CI/CD améliore la qualité du code en détectant rapidement les régressions ou les bugs.
 - **Confiance** : En s'appuyant sur des pipelines bien configurés, les développeurs peuvent déployer en production avec confiance, sachant que les tests ont été effectués et que les étapes de déploiement sont automatisées.
 
-### Configuration
+### Relations entre GitHub Actions, Docker Hub et Render
 
-Ce projet est configuré avec un pipeline CI/CD dans le fichier `.github/workflows/ci-cd.yml`. Le pipeline effectue les actions suivantes :
+Le **CI/CD (Continuous Integration/Continuous Deployment)** est essentiel pour automatiser tout le processus de développement. Ce projet est configuré avec un pipeline CI/CD dans le fichier `.github/workflows/ci-cd.yml`. Chaque fois qu'un développeur pousse une modification sur le dépôt GitHub, le pipeline CI/CD est déclenché via GitHub Actions, qui suit ces étapes :
 
-1. **Installation des dépendances** : Installe les dépendances définies dans `requirements.txt`.
-2. **Exécution des tests** : Exécute les tests unitaires via `pytest`.
-3. **Création et déploiement de l'image Docker** : Si les tests sont réussis, le pipeline crée une image Docker et la pousse sur Docker Hub.
-4. **Déclenchement du déploiement sur Render** : Une fois l'image Docker prête, le déploiement est déclenché sur Render via un webhook. 
+1. **Installation des dépendances** : À chaque push sur la branche principale du dépôt GitHub, le pipeline commence par installer les dépendances définies dans `requirements.txt`.
+2. **Tests et validation** : Le pipeline commence par exécuter les tests unitaires via `pytest`. Si les tests échouent, le processus s'arrête ici.
+3. **Construction de l'image Docker** : Si les tests réussissent, une image Docker de l'API est automatiquement construite et envoyée vers Docker Hub.
+4. **Déploiement automatique sur Render** : Une fois l'image Docker prête et validée, le déploiement est déclenché sur Render via un webhook. Render récupère l'image depuis Docker Hub et l'utilise pour déployer la nouvelle version de l'application en production.
 
 > 🚨 **Notez qu'il est important de désactiver l'option Auto-Deploy sur Render pour que le déploiement suive uniquement le workflow GitHub Actions et ne se déclenche qu'après validation complète du pipeline CI/CD.** 🚨
-
-### Application dans ce projet
-
-Dans ce projet, le pipeline CI/CD assure que chaque modification du code est correctement testée avant d'être déployée en production. Voici comment le pipeline est appliqué :
-
-1. **Test automatique** : À chaque push sur la branche principale du dépôt GitHub, le pipeline CI/CD teste le code avec `pytest`.
-2. **Création de l'image Docker** : Si les tests réussissent, une image Docker est créée.
-3. **Déploiement automatique** : Enfin, l'image est déployée sur Render, garantissant que la dernière version de l'application est toujours en production.
 
 ### Secrets dans CI/CD
 
