@@ -1,10 +1,14 @@
-summary: "Faire une prédiction avec le modèle Iris"
-description: "Prend les caractéristiques de la fleur Iris en entrée et retourne la classe prédite."
+tags:
+  - "Prédictions"
+summary: "Prédiction de la classe d'une fleur Iris"
+description: |
+  Cet endpoint reçoit en entrée les caractéristiques d'une fleur Iris sous forme de liste de quatre valeurs numériques (longueur et largeur des sépales et des pétales). Il retourne la classe prédite par le modèle Iris (Setosa, Versicolor ou Virginica) sous forme d'un entier.
+operationId: "postPredict"
 parameters:
   - name: "body"
     in: "body"
     required: True
-    description: "Les caractéristiques de la fleur sous forme de liste"
+    description: "Caractéristiques de la fleur Iris sous forme d'une liste de quatre valeurs numériques."
     schema:
       type: "object"
       properties:
@@ -13,20 +17,32 @@ parameters:
           items:
             type: "number"
           example: [5.1, 3.5, 1.4, 0.2]
+          description: "Liste de quatre valeurs numériques représentant les caractéristiques florales : longueur et largeur des sépales, longueur et largeur des pétales."
 responses:
   200:
-    description: "La classe prédite pour la fleur Iris"
+    description: "Classe prédite pour la fleur Iris, représentée par un entier : 0 pour Setosa, 1 pour Versicolor, 2 pour Virginica."
     schema:
       type: "object"
       properties:
         prediction:
           type: "integer"
           example: 0
+          description: "Classe prédite pour la fleur Iris. 0 pour Setosa, 1 pour Versicolor, 2 pour Virginica."
   400:
-    description: "Erreur dans les données envoyées"
+    description: "Erreur dans les données envoyées. Cela se produit si les caractéristiques sont manquantes, incorrectes ou non numériques."
     schema:
       type: "object"
       properties:
         error:
           type: "string"
-          example: "Les données doivent contenir la clé 'features'."
+          example: "Les 'features' doivent être une liste de 4 valeurs numériques."
+          description: "Message d'erreur expliquant pourquoi les données sont invalides."
+  500:
+    description: "Erreur interne du serveur lors du traitement de la requête."
+    schema:
+      type: "object"
+      properties:
+        error:
+          type: "string"
+          example: "Erreur interne du serveur"
+          description: "Message d'erreur en cas de problème serveur lors de la prédiction."

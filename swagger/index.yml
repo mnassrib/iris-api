@@ -1,11 +1,17 @@
+tags:
+  - "Accueil"
 summary: "Page d'accueil de l'API Iris"
-description: "Bienvenue sur l'API de prédiction Iris"
+description: |
+  Cette page est la page d'accueil de l'API de prédiction Iris. 
+  Elle affiche un message de bienvenue confirmant que l'API est active et prête à répondre aux requêtes.
+operationId: "getHomePage"
 responses:
   200:
-    description: "Bienvenue sur l'API de prédiction Iris"
+    description: "Réponse réussie avec un message de bienvenue"
     schema:
       type: "object"
       properties:
         message:
           type: "string"
           example: "Bienvenue sur l'API de prédiction Iris"
+          description: "Message de bienvenue confirmant que l'API est opérationnelle."

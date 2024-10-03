@@ -93,6 +93,7 @@ iris-api
 - **`models/iris_model.pkl`** : Modèle pré-entraîné utilisé pour faire des prédictions.
 - **`utils/model_utils.py`** : Contient la fonction de chargement du modèle.
 - **`utils/validation.py`** : Contient la fonction de validation des données d'entrée.
+- **`utils/swagger_config.py`** : Contient le template de configuration de Swagger.
 - **`swagger/`** : Contient les fichiers YAML définissant la documentation Swagger pour les différents endpoints.
 - **`tests/test_app.py`** : Tests unitaires pour valider le bon fonctionnement de l'API.
 - **`__init__.py`** : Fichier qui indique à Python que le répertoire doit être traité comme un module, souvent utilisé pour initialiser des packages et gérer les imports au sein du répertoire.
