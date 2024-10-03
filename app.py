@@ -9,11 +9,23 @@ import json # Pour encoder et décoder des données JSON
 # Initialiser Flask
 app = Flask(__name__)
 
-# Configurer Swagger pour la documentation API et l'initialiser avec le template importé
+# Configurer Swagger pour la documentation API avec un template
 swagger = Swagger(app, template=swagger_template)
 
 # Charger le modèle au démarrage de l'application
 model = load_model()
+
+@app.before_request
+def configure_swagger():
+    """
+    Configure dynamiquement le schéma (http/https) et l'hôte pour Swagger.
+    Cette fonction est appelée avant chaque requête pour garantir que l'hôte et le schéma sont définis correctement.
+    """
+    scheme = request.scheme  # HTTP ou HTTPS
+    host = request.host  # Hôte (localhost:5000 ou hôte de production)
+    swagger_template['schemes'] = [scheme]
+    swagger_template['host'] = host
+    app.config['SWAGGER'] = swagger_template  # Mettre à jour la configuration Swagger
 
 @app.route('/predict', methods=['POST'])
 @swag_from('swagger/predict.yml')  # Documentation Swagger pour l'endpoint /predict

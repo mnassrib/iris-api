@@ -13,20 +13,15 @@ swagger_template = {
             "url": "https://opensource.org/licenses/MIT"
         },
     },
-    "host": "https://iris-api-7cbf.onrender.com",  # Remplacez par l'hôte en production si nécessaire
     "basePath": "/",  # Le chemin de base pour toutes les routes
-    "schemes": [
-        "http",
-        "https"
-    ],
     "tags": [
                 {
             "name": "Accueil",
             "description": "Endpoint de la page d'accueil"
         },
         {
-            "name": "Prédictions",
-            "description": "Endpoints liés aux prédictions d'Iris"
+            "name": "Prédiction",
+            "description": "Endpoint lié aux prédictions d'Iris"
         }
     ]
 }

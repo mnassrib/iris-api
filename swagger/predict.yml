@@ -1,5 +1,5 @@
 tags:
-  - "Prédictions"
+  - "Prédiction"
 summary: "Prédiction de la classe d'une fleur Iris"
 description: |
   Cet endpoint reçoit en entrée les caractéristiques d'une fleur Iris sous forme de liste de quatre valeurs numériques (longueur et largeur des sépales et des pétales). Il retourne la classe prédite par le modèle Iris (Setosa, Versicolor ou Virginica) sous forme d'un entier.
